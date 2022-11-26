@@ -11,5 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </com.yandex.mapkit.mapview.MapView>
+    <Button
+        android:id="@+id/locationButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/toggleTrafficButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp"
+        android:text="Локация"
+        android:textColor="#b5b5b5"
+        android:textAlignment="center"
+        android:background="@drawable/on_screen_button" />
+    <Button
+        android:id="@+id/toggleTrafficButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp"
+        android:text="Пробки"
+        android:textColor="#b5b5b5"
+        android:textAlignment="center"
+        android:background="@drawable/on_screen_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
