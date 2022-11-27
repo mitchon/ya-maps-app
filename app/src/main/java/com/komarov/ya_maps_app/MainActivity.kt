@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
     private lateinit var userLocationLayer: UserLocationLayer
     private lateinit var preferences: SharedPreferences
     private lateinit var searchManager: SearchManager
+    var searchInProgress = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,26 +155,41 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
     }
 
     fun getMapView(): MapView = mapView
+
     override fun onMapObjectTap(p0: MapObject, p1: Point): Boolean {
         Log.w("Tap1", "${p1.latitude} ${p1.longitude}")
-        val coordinates = (p0 as PlacemarkMapObject).geometry
-        searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
+//        val coordinates = (p0 as PlacemarkMapObject).geometry
+//        searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
+        mapView.map.move(
+            CameraPosition(p1, 16f, 0f, 0f),
+            Animation(Animation.Type.SMOOTH, 1f),
+            null
+        )
         return true
     }
 
     override fun onObjectTap(p0: GeoObjectTapEvent): Boolean {
-        val point = p0.geoObject.geometry[0].point
-        Log.w("Tap2", "${point?.latitude} ${point?.longitude}")
-        val coordinates = p0.geoObject.geometry[0].point?: return false
-        searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
+        if (!searchInProgress) {
+            val point = p0.geoObject.geometry[0].point
+            Log.w("Tap2", "${point?.latitude} ${point?.longitude}")
+            val coordinates = p0.geoObject.geometry[0].point ?: return false
+            searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
+        }
         return true
     }
 
     override fun onBackPressed() {
         val recycler = findViewById<RecyclerView>(R.id.search_results_list)
-        if (recycler.visibility == View.VISIBLE)
+        if (recycler.visibility == View.VISIBLE) {
             recycler.visibility = View.GONE
-        else
-            super.onBackPressed()
+            return
+        }
+        if (searchInProgress) {
+            searchInProgress = false
+            findViewById<Button>(R.id.pathCreateButton).visibility = View.GONE
+            mapView.map.mapObjects.clear()
+            return
+        }
+        super.onBackPressed()
     }
 }
