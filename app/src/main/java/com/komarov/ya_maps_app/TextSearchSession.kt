@@ -1,7 +1,11 @@
 package com.komarov.ya_maps_app
 
 import android.util.Log
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.yandex.mapkit.Animation
+import com.yandex.mapkit.GeoObjectCollection
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.Session
@@ -37,6 +41,7 @@ class TextSearchSession(
                 )
             }
         }
+        RecyclerJob(context).showResults(p0.collection.children)
     }
-
 }
+

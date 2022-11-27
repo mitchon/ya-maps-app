@@ -8,13 +8,17 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.contentValuesOf
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -68,6 +72,7 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
             mapView.map.mapObjects.clear()
             val query = findViewById<TextView>(R.id.searchInput).text.toString()
             searchManager.submit(query, VisibleRegionUtils.toPolygon(mapView.map.visibleRegion), SearchOptions(), TextSearchSession(this))
+            findViewById<EditText>(R.id.searchInput).text.clear()
         }
         mapView.map.addTapListener(this)
     }
@@ -152,25 +157,23 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
     override fun onMapObjectTap(p0: MapObject, p1: Point): Boolean {
         Log.w("Tap1", "${p1.latitude} ${p1.longitude}")
         val coordinates = (p0 as PlacemarkMapObject).geometry
-        mapView.map.move(
-            CameraPosition(coordinates, 16f, 0f, 0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
         searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
         return true
     }
 
     override fun onObjectTap(p0: GeoObjectTapEvent): Boolean {
         val point = p0.geoObject.geometry[0].point
-        Log.w("Tap", "${point?.latitude} ${point?.longitude}")
+        Log.w("Tap2", "${point?.latitude} ${point?.longitude}")
         val coordinates = p0.geoObject.geometry[0].point?: return false
-        mapView.map.move(
-            CameraPosition(coordinates, 16f, 0f, 0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
         searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
         return true
+    }
+
+    override fun onBackPressed() {
+        val recycler = findViewById<RecyclerView>(R.id.search_results_list)
+        if (recycler.visibility == View.VISIBLE)
+            recycler.visibility = View.GONE
+        else
+            super.onBackPressed()
     }
 }
