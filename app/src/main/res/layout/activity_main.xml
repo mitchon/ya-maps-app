@@ -9,66 +9,64 @@
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.yandex.mapkit.mapview.MapView>
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/search_linear_layout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/search_linear_layout" >
+        app:layout_constraintTop_toTopOf="parent">
+
         <EditText
             android:id="@+id/searchInput"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:layout_weight="1"
             android:background="@drawable/search_linear_layout"
-            android:padding="10dp"
-            android:textColorHint="#6e6e6e"
             android:hint="Введите место"
+            android:padding="10dp"
             android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textColorHint="#6e6e6e" />
 
         <Button
             android:id="@+id/searchButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:background="@drawable/on_screen_button_active"
             android:text="Поиск"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/searchInput"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@drawable/on_screen_button_active"
-            android:layout_margin="10dp"/>
+            app:layout_constraintStart_toEndOf="@+id/searchInput" />
     </LinearLayout>
 
     <Button
         android:id="@+id/locationButton"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/toggleTrafficButton"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="10dp"
+        android:background="@drawable/on_screen_button"
         android:text="Локация"
-        android:textColor="#b5b5b5"
         android:textAlignment="center"
-        android:background="@drawable/on_screen_button" />
+        android:textColor="#b5b5b5"
+        app:layout_constraintBottom_toTopOf="@id/toggleTrafficButton"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <Button
         android:id="@+id/toggleTrafficButton"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="10dp"
+        android:background="@drawable/on_screen_button"
         android:text="Пробки"
-        android:textColor="#b5b5b5"
         android:textAlignment="center"
-        android:background="@drawable/on_screen_button" />
+        android:textColor="#b5b5b5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
