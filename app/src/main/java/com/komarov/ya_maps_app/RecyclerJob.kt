@@ -15,12 +15,13 @@ class RecyclerJob(val context: MainActivity) {
         val point = results[position].obj?.geometry?.get(0)?.point
         if (point != null) {
             mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context, R.drawable.search_result))
-            context.findViewById<Button>(R.id.pathCreateButton).visibility = View.VISIBLE
+            context.findViewById<Button>(R.id.routeCreateButton).visibility = View.VISIBLE
             mapView.map.move(
                 CameraPosition(point, 16f, 0f, 0f),
                 Animation(Animation.Type.SMOOTH, 1f),
                 null
             )
+            context.destinationPoint = point
         }
     }
 

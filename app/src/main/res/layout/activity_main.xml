@@ -80,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/pathCreateButton"
+        android:id="@+id/routeCreateButton"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
