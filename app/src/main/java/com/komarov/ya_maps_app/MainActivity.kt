@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -23,7 +21,6 @@ import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
 import com.yandex.mapkit.directions.DirectionsFactory
 import com.yandex.mapkit.directions.driving.*
-import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.GeoObjectTapEvent
 import com.yandex.mapkit.layers.GeoObjectTapListener
@@ -35,7 +32,7 @@ import com.yandex.runtime.Error
 import kotlin.random.Random
 
 
-class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapListener, DrivingSession.DrivingRouteListener {
+class MainActivity : AppCompatActivity(), GeoObjectTapListener {
     private lateinit var mapView: MapView
     private lateinit var userLocationLayer: UserLocationLayer
     private lateinit var preferences: SharedPreferences
@@ -55,28 +52,12 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
         mapView = findViewById(R.id.mapview)
         val trafficLayer = MapKitFactory.getInstance().createTrafficLayer(mapView.mapWindow)
         trafficLayer.isTrafficVisible = false
-        val toggleTrafficButton: Button = findViewById(R.id.toggleTrafficButton)
-        toggleTrafficButton.setOnClickListener {
-            when (trafficLayer.isTrafficVisible) {
-                true -> {
-                    trafficLayer.isTrafficVisible = false
-                    toggleTrafficButton.background = ResourcesCompat.getDrawable(resources, R.drawable.on_screen_button, null)
-                }
-                false -> {
-                    trafficLayer.isTrafficVisible = true
-                    toggleTrafficButton.background = ResourcesCompat.getDrawable(resources, R.drawable.on_screen_button_active, null)
-                }
-            }
-        }
-        val locationButton: Button = findViewById(R.id.locationButton)
-        locationButton.setOnClickListener {
-            moveCamera()
-        }
+        findViewById<Button>(R.id.toggleTrafficButton).setOnClickListener(ToggleTrafficListener(trafficLayer))
+        findViewById<Button>(R.id.locationButton).setOnClickListener { moveCamera() }
         requestPermission()
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
         moveCamera()
-        val searchButton: Button = findViewById(R.id.searchButton)
-        searchButton.setOnClickListener {
+        findViewById<Button>(R.id.searchButton).setOnClickListener {
             mapView.map.mapObjects.clear()
             val query = findViewById<TextView>(R.id.searchInput).text.toString()
             searchManager.submit(query, VisibleRegionUtils.toPolygon(mapView.map.visibleRegion), SearchOptions(), TextSearchSession(this))
@@ -155,7 +136,7 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
         editor.remove("defaultLongitude")
         editor.putString("defaultLatitude", point.latitude.toString())
         editor.putString("defaultLongitude", point.longitude.toString())
-        editor.commit()
+        editor.apply()
     }
 
     private fun getDefaultLocation(): Point {
@@ -166,18 +147,6 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
     }
 
     fun getMapView(): MapView = mapView
-
-    override fun onMapObjectTap(p0: MapObject, p1: Point): Boolean {
-        Log.w("Tap1", "${p1.latitude} ${p1.longitude}")
-//        val coordinates = (p0 as PlacemarkMapObject).geometry
-//        searchManager.submit(coordinates, null, SearchOptions(), TapSearchSession(this))
-        mapView.map.move(
-            CameraPosition(p1, 16f, 0f, 0f),
-            Animation(Animation.Type.SMOOTH, 1f),
-            null
-        )
-        return true
-    }
 
     override fun onObjectTap(p0: GeoObjectTapEvent): Boolean {
         if (!searchInProgress) {
@@ -214,25 +183,6 @@ class MainActivity : AppCompatActivity(), MapObjectTapListener, GeoObjectTapList
             RequestPoint(pointStart, RequestPointType.WAYPOINT, null),
             RequestPoint(destinationPoint!!, RequestPointType.WAYPOINT, null)
         )
-        drivingSession = drivingRouter.requestRoutes(requestPoints, DrivingOptions(), VehicleOptions(), this)
-    }
-
-    override fun onDrivingRoutes(p0: List<DrivingRoute>) {
-        for (route in p0) {
-            val polyline = mapView.map.mapObjects.addPolyline(route.geometry)
-            polyline.outlineColor = Color.BLACK
-            polyline.setStrokeColor(Color.argb(255, Random.nextInt(), Random.nextInt(), Random.nextInt()))
-
-            val cameraPosition = mapView.map.cameraPosition(polyline.geometry.let { BoundingBox(it.points.first(), it.points.last()) })
-            mapView.map.move(
-                CameraPosition(cameraPosition.target, cameraPosition.zoom - 1.0f, 0f, 0f),
-                Animation(Animation.Type.SMOOTH, 1f),
-                null
-            )
-        }
-    }
-
-    override fun onDrivingRoutesError(p0: Error) {
-        Log.e("DrivingRoutes", p0.toString())
+        drivingSession = drivingRouter.requestRoutes(requestPoints, DrivingOptions(), VehicleOptions(), DrivingRoutesListener(mapView))
     }
 }
