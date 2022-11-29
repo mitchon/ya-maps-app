@@ -26,7 +26,7 @@ class TextSearchSession(
             val point = item.obj?.geometry?.get(0)?.point
             if (point != null)
                 mapView.map.mapObjects.addPlacemark(point, ImageProvider.fromResource(context, R.drawable.search_result))
-                    .addTapListener(FoundPointsListener(context.getMapView()))
+                    .addTapListener(FoundPointsListener(context))
         }
         p0.collection.children.let {
             val point = it.firstOrNull()?.obj?.geometry?.get(0)?.point

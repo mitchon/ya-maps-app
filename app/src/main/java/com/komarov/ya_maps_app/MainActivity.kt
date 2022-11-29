@@ -29,6 +29,7 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.*
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.Error
+import com.yandex.runtime.image.ImageProvider
 import kotlin.random.Random
 
 
@@ -175,6 +176,8 @@ class MainActivity : AppCompatActivity(), GeoObjectTapListener {
     }
 
     private fun submitRequest() {
+        mapView.map.mapObjects.clear()
+        mapView.map.mapObjects.addPlacemark(destinationPoint!!)
         val pointStart = if (!this::userLocationLayer.isInitialized || userLocationLayer.cameraPosition() == null)
             getDefaultLocation().also { mapView.map.mapObjects.addPlacemark(it) }
         else
